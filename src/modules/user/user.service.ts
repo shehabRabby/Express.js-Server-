@@ -1,15 +1,24 @@
 import { pool } from "../../db";
 import type { IUser } from "./user.interface";
+import bcrypt from "bcryptjs";
 
 const createUserIntoDB = async (payload: IUser) => {
   const { name, email, password, age } = payload;
+
+  const hashPassword = await bcrypt.hash(password, 7);
+
   const result = await pool.query(
     `
     INSERT INTO users(name,email,password,age)
     VALUES($1,$2,$3,$4) RETURNING *
     `,
-    [name, email, password, age],
+    [name, email, hashPassword, age],
   );
+
+  //hide sensetive data
+  delete result.rows[0].password;
+  delete result.rows[0].is_active;
+
   return result;
 };
 
@@ -17,6 +26,9 @@ const getAllUsersFromDB = async () => {
   const result = await pool.query(`
             SELECT * FROM users 
             `);
+
+  delete result.rows[0].password;
+  delete result.rows[0].is_active;
   return result;
 };
 
@@ -27,6 +39,10 @@ const getSingleUserFromDB = async (id: string) => {
             `,
     [id],
   );
+
+  delete result.rows[0].password;
+  delete result.rows[0].is_active;
+
   return result;
 };
 
@@ -44,6 +60,8 @@ const updateUserIntoDB = async (payload: IUser, id: string) => {
             `,
     [name, password, age, is_active, id],
   );
+  delete result.rows[0].password;
+  delete result.rows[0].is_active;
   return result;
 };
 
