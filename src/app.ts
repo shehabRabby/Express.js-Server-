@@ -26,6 +26,6 @@ app.get("/", (req: Request, res: Response) => {
 //atached router
 app.use("/api/users", userRoute);
 app.use("/api/profile", profileRoute);
-app.use("/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 export default app;
