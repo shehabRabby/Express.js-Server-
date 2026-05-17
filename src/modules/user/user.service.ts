@@ -23,9 +23,11 @@ const createUserIntoDB = async (payload: IUser) => {
 };
 
 const getAllUsersFromDB = async () => {
-  const result = await pool.query(`
-            SELECT * FROM users 
-            `);
+  const result = await pool.query(
+    `
+    SELECT * FROM users 
+    `,
+  );
 
   delete result.rows[0].password;
   delete result.rows[0].is_active;
